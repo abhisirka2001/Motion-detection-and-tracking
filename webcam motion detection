@@ -1,12 +1,12 @@
-# Python program to implement
-# Webcam Motion Detector
+# Python program to implement webcam motion detector
+
 
 # importing OpenCV, time and Pandas library
 import cv2
-import time
-import pandas
+import time 
+import pandas as pd
 # importing datetime class from datetime library
-from datetime import datetime
+from datetime import datetime as dt
 
 # Assigning our static_back to None
 static_back = None
@@ -19,16 +19,19 @@ time = []
 
 # Initializing DataFrame, one column is start
 # time and other column is end time
-df = pandas.DataFrame(columns = ["Start", "End"])
+df = pd.DataFrame(columns = ["Start", "End"])
 
 # Capturing video
-video = cv2.VideoCapture(0)
+cap = cv2.VideoCapture(0)
 
 # Infinite while loop to treat stack of image as video
 while True:
 	# Reading frame(image) from video
-	check, frame = video.read()
-
+	check, frame = cap.read()
+	
+        # showing input frame
+	cv2.imshow("original_frame",frame)
+	
 	# Initializing motion = 0(no motion)
 	motion = 0
 
@@ -39,14 +42,14 @@ while True:
 	# so that change can be find easily
 	gray = cv2.GaussianBlur(gray, (21, 21), 0)
 
-	# In first iteration we assign the value
-	# of static_back to our first frame
+	# In first iteration we assign the value of static_back to our first frame
+	
 	if static_back is None:
 		static_back = gray
 		continue
 
-	# Difference between static background
-	# and current frame(which is GaussianBlur)
+	# Difference between static background and current frame(which is GaussianBlur)
+	
 	diff_frame = cv2.absdiff(static_back, gray)
 
 	# If change in between static background and
@@ -83,23 +86,24 @@ while True:
 	# Displaying image in gray_scale
 	cv2.imshow("Gray Frame", gray)
 
-	# Displaying the difference in currentframe to
-	# the staticframe(very first_frame)
+	# Displaying the difference in currentframe to the staticframe(very first_frame)
+	
 	cv2.imshow("Difference Frame", diff_frame)
 
-	# Displaying the black and white image in which if
-	# intensity difference greater than 30 it will appear white
+	# Displaying the black and white image in which if intensity difference greater than 30 it will appear white
+	
 	cv2.imshow("Threshold Frame", thresh_frame)
 
 	# Displaying color frame with contour of motion of object
 	cv2.imshow("Color Frame", frame)
 
 	key = cv2.waitKey(1)
+	
 	# if q entered whole process will stop
 	if key == ord('q'):
 		# if something is movingthen it append the end time of movement
 		if motion == 1:
-			time.append(datetime.now())
+			time.append(dt.now())
 		break
 
 # Appending time of motion in DataFrame
@@ -109,7 +113,7 @@ for i in range(0, len(time), 2):
 # Creating a CSV file in which time of movements will be saved
 df.to_csv("Time_of_movements.csv")
 
-video.release()
+cap.release()
 
 # Destroying all the windows
 cv2.destroyAllWindows()

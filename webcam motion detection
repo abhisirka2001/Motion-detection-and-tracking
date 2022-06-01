@@ -1,4 +1,4 @@
-# Python program to implement webcam motion detector
+# Python program to implement  motion detector and Tracking 
 
 
 # importing OpenCV, time and Pandas library
@@ -81,7 +81,7 @@ while True:
 
 	# Appending End time of motion
 	if motion_list[-1] == 0 and motion_list[-2] == 1:
-		time.append(datetime.now())
+		time.append(dt.now())
 
 	# Displaying image in gray_scale
 	cv2.imshow("Gray Frame", gray)

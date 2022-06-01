@@ -53,9 +53,9 @@ while True:
 	diff_frame = cv2.absdiff(static_back, gray)
 
 	# If change in between static background and
-	# current frame is greater than 30 it will show white color(255)
-	thresh_frame = cv2.threshold(diff_frame, 30, 255, cv2.THRESH_BINARY)[1]
-	thresh_frame = cv2.dilate(thresh_frame, None, iterations = 2)
+	# current frame is greater than 40 it will show white color(255)
+	thresh_frame = cv2.threshold(diff_frame, 40, 255, cv2.THRESH_BINARY)[1]
+	thresh_frame = cv2.dilate(thresh_frame, None, iterations = 5)
 
 	# Finding contour of moving object
 	cnts,_ = cv2.findContours(thresh_frame.copy(),
@@ -77,7 +77,7 @@ while True:
 
 	# Appending Start time of motion
 	if motion_list[-1] == 1 and motion_list[-2] == 0:
-		time.append(datetime.now())
+		time.append(dt.now())
 
 	# Appending End time of motion
 	if motion_list[-1] == 0 and motion_list[-2] == 1:

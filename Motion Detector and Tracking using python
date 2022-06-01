@@ -1,6 +1,7 @@
-# Motion Detector and Tracking  using Pyth
+# Motion Detector and Tracker using Python
 
-Problem statement Motion detection and tracking system:
+Problem statement:
+Motion detection and tracking system:
 
 1. create a tracker based on motion in python.
 2. It should be able to detect motion from your webcam and then also track each object motion simultaneously, keeping track of each object.
@@ -30,8 +31,8 @@ object_detector = cv2.createBackgroundSubtractorMOG2(history=700, varThreshold=4
 # Time of movement
 time = []
 
-# Initializing DataFrame, one column is start
-# time and other column is end time
+# Initializing DataFrame, one column is start_of_time
+# and other column is end_of_time
 df = pd.DataFrame(columns = ["Start_of_time", "End_of_time"])
 
 # Capturing video

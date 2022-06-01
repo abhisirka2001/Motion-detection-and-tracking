@@ -8,11 +8,12 @@ Problem statement Motion detection and tracking system:
 4. You then need to show input image, preprocessed image, post processed motion mask and final image with object tracking.
 
 
-# importing OpenCV, time and Pandas library
+# importing OpenCV, time, Numpy and Pandas library
 
 import cv2
 import time 
 import pandas as pd
+import numpy as np
 
 # importing datetime class from datetime library
 from datetime import datetime as dt
@@ -23,15 +24,23 @@ static_back = None
 # List when any moving object appear
 motion_list = [ None, None ]
 
+# Create the background subtractor object and Use the last 700 video frames to build the background
+object_detector = cv2.createBackgroundSubtractorMOG2(history=700, varThreshold=40)
+
 # Time of movement
 time = []
 
 # Initializing DataFrame, one column is start
 # time and other column is end time
-df = pd.DataFrame(columns = ["Start", "End"])
+df = pd.DataFrame(columns = ["Start_of_time", "End_of_time"])
 
 # Capturing video
 cap = cv2.VideoCapture(0)
+
+# Create kernel for morphological operation
+# You can tweak the dimensions of the kernel
+kernel = np.ones((25, 25), np.uint8)
+
 
 # Infinite while loop to treat stack of image as video
 while True:
@@ -40,6 +49,18 @@ while True:
 	
         # showing input frame
 	cv2.imshow("original_frame",frame)
+	
+	# applying on each frame and showing the masked image
+        fgmask = object_detector.apply(frame)
+	
+	# Close dark gaps in foreground object using closing
+        fg_mask = cv2.morphologyEx(fgmask, cv2.MORPH_CLOSE, kernel)
+	
+	# Remove salt and pepper noise with a median filter
+        fg_mask = cv2.medianBlur(fg_mask, 5)
+	
+	# Displaying the masked frame
+        cv2.imshow('mask frame', fgmask)
 	
 	# Initializing motion = 0(no motion)
 	motion = 0
@@ -78,6 +99,16 @@ while True:
 		(x, y, w, h) = cv2.boundingRect(contour)
 		# making green rectangle around the moving object
 		cv2.rectangle(frame, (x, y), (x + w, y + h), (0, 255, 0), 3)
+		
+		# Draw circle in the center of the bounding box
+                x2 = x + int(w / 2)
+                y2 = y + int(h / 2)
+                cv2.circle(frame, (x2, y2), 4, (0, 255, 0), -1)
+		
+		# Print the centroid coordinates (we'll use the center of the bounding box) on the image
+                text = "x: " + str(x2) + ", y: " + str(y2)
+                cv2.putText(frame, text, (x2 - 10, y2 - 10),
+                                      cv2.FONT_HERSHEY_SIMPLEX, 0.5, (0, 255, 0), 2)
 
 	# Appending status of motion
 	motion_list.append(motion)
@@ -117,7 +148,7 @@ while True:
 
 # Appending time of motion in DataFrame
 for i in range(0, len(time), 2):
-	df = df.append({"Start":time[i], "End":time[i + 1]}, ignore_index = True)
+	df = df.append({"Start_of_time":time[i], "End_of_time":time[i + 1]}, ignore_index = True)
 
 # Creating a CSV file in which time of movements will be saved
 df.to_csv("Time_of_movements.csv")

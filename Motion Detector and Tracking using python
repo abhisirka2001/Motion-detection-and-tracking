@@ -1,10 +1,19 @@
 # Python program to implement  motion detector and Tracking 
 
+Problem statement Motion detection and tracking system:
+
+1. create a tracker based on motion in python.
+2. It should be able to detect motion from your webcam and then also track each object motion simultaneously, keeping track of each object.
+3. You have to implement preprocessing and post processing on your input image to improve the results.
+4. You then need to show input image, preprocessed image, post processed motion mask and final image with object tracking.
+
 
 # importing OpenCV, time and Pandas library
+
 import cv2
 import time 
 import pandas as pd
+
 # importing datetime class from datetime library
 from datetime import datetime as dt
 
